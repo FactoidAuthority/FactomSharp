@@ -1,17 +1,11 @@
-# FactomSharp .NET Factom node API
-### A .net implementation of the Factom API written in C#.
+# FactomSharp .NET Factom node API DLL
+### A .NET implementation of the Factom API written in C#.
 
 ##### Supports:
 
 * factomd API V2
 * factom-walletd API V2
 
-##### Depends on:
-
-* Newtonsoft.json
-* RestSharp
-* dlech.Chaos.NaCL
- 
 #### Features:
 
 * Provides all API functions.  Native Json-like classes & helper methods.
@@ -27,6 +21,12 @@
         * Track Balances (TODO)
 * HTTP, HTTPS, Proxy support (uses RestSharp)
 * NuGet for easy installation
+
+##### Depends on:
+
+* Newtonsoft.json
+* RestSharp
+* dlech.Chaos.NaCL
 
 ---
 
@@ -60,6 +60,7 @@
     Console.ReadLine(); //Pause, let the chain thread run.
 
 The chain class will monitor the entries.  The two status's of interest are:
+
     TransactionACK   - Found in network, but not written to the blockchain yet.
     DBlockConfirmed  - Found in Blockchain.
 

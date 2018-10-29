@@ -10,13 +10,12 @@ namespace FactomSharp.Helper
         public string            Public  { get; private set; }
         public string            Secret  { get; private set; }
     
-        public ECAddress(FactomdRestClient factomd, string secretAddress, string publicAddress)
+        public ECAddress(FactomdRestClient factomd, string publicAddress, string secretAddress=null)
         {
             Secret  = secretAddress;
             Public  = publicAddress;
             FactomD = factomd;
         }
-        
         
         public long GetBalance()
         {
@@ -33,7 +32,5 @@ namespace FactomSharp.Helper
             
             return ecrate?.Result?.result?.Rate / 0.0000000001m ?? -1;
         }
-        
-        
     }
 }

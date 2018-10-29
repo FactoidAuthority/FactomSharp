@@ -10,13 +10,12 @@ namespace FactomSharp.Helper
         public string            Public  { get; private set; }
         public string            Secret  { get; private set; }
     
-        public FCTAddress(FactomdRestClient factomd, string secretAddress, string publicAddress)
+        public FCTAddress(FactomdRestClient factomd, string publicAddress, string secretAddress = null)
         {
             Secret  = secretAddress;
             Public  = publicAddress;
             FactomD = factomd;
         }
-        
         
         public decimal GetBalance()
         {
@@ -25,6 +24,5 @@ namespace FactomSharp.Helper
             
             return balance.Balance;
         }
-        
     }
 }

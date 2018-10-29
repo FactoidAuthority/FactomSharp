@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{96F73F66-654C-4413-86E4-1D0EAA0A80C8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>FactomSharp</RootNamespace>
+    <AssemblyName>FactomTest</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <PackOnBuild>true</PackOnBuild>
+    <Owners>TFA - The Factoid Authority</Owners>
+    <Summary>.NET API for Factom</Summary>
+    <Title>FactomSharp</Title>
+    <Description>.NET API for Factom</Description>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="NSec.Cryptography">
+      <HintPath>packages\NSec.Cryptography.18.6.0\lib\netstandard1.1\NSec.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="Chaos.NaCl">
+      <HintPath>packages\dlech.Chaos.NaCl.0.1.0.0\lib\net40\Chaos.NaCl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime">
+      <HintPath>packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO">
+      <HintPath>packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>packages\RestSharp.106.5.4\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>packages\RestSharp.106.5.4\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Factomd\FactomdRestClient.cs" />
+    <Compile Include="FactomWalletd\FactomWalletdRestClient.cs" />
+    <Compile Include="Factomd\API\Ack.cs" />
+    <Compile Include="Factomd\API\ChainHead.cs" />
+    <Compile Include="Factomd\API\CommitChain.cs" />
+    <Compile Include="Factomd\API\CommitEntry.cs" />
+    <Compile Include="Factomd\API\EntryBlock.cs" />
+    <Compile Include="Factomd\API\PendingEntries.cs" />
+    <Compile Include="Factomd\API\ABlockByHeight.cs" />
+    <Compile Include="Factomd\API\RevealChain.cs" />
+    <Compile Include="Factomd\API\RevealEntry.cs" />
+    <Compile Include="FactomWalletd\API\AllAddresses.cs" />
+    <Compile Include="FactomWalletd\API\ComposeChain.cs" />
+    <Compile Include="FactomWalletd\API\WalletBalances.cs" />
+    <Compile Include="FactomUtils\DataStructs.cs" />
+    <Compile Include="FactomUtils\FactomUtils.cs" />
+    <Compile Include="Factomd\EntryData.cs" />
+    <Compile Include="Factomd\API\Entry.cs" />
+    <Compile Include="FactomUtils\RestSharpJasonSerializer.cs" />
+    <Compile Include="Factomd\API\EntryCreditBalance.cs" />
+    <Compile Include="Factomd\API\EntryCreditRate.cs" />
+    <Compile Include="Factomd\API\FactoidBalance.cs" />
+    <Compile Include="Factomd\API\Heights.cs" />
+    <Compile Include="FactomWalletd\API\GetHeight.cs" />
+    <Compile Include="FactomWalletd\API\GenerateEcAddress.cs" />
+    <Compile Include="FactomWalletd\API\GenerateFactoidAddress.cs" />
+    <Compile Include="Factomd\API\Receipt.cs" />
+    <Compile Include="Factomd\API\AdminBlock.cs" />
+    <Compile Include="Factomd\API\CurrentMinute.cs" />
+    <Compile Include="Factomd\API\DBlockByHeight.cs" />
+    <Compile Include="Factomd\API\DirectoryBlock.cs" />
+    <Compile Include="Factomd\API\DirectoryBlockHead.cs" />
+    <Compile Include="Factomd\API\EcBlockByHeight.cs" />
+    <Compile Include="Factomd\API\EntryCreditBlock.cs" />
+    <Compile Include="Factomd\API\FactoidBlock.cs" />
+    <Compile Include="Factomd\API\FactoidSubmit.cs" />
+    <Compile Include="Factomd\API\FblockByHeight.cs" />
+    <Compile Include="Factomd\API\MultipleECBalances.cs" />
+    <Compile Include="Factomd\API\MultipleFCTBalances.cs" />
+    <Compile Include="Factomd\API\PendingTransactions.cs" />
+    <Compile Include="Factomd\API\Properties.cs" />
+    <Compile Include="Factomd\API\RawData.cs" />
+    <Compile Include="Factomd\API\SendRawMessage.cs" />
+    <Compile Include="FactomWalletd\API\ImportAddresses.cs" />
+    <Compile Include="FactomWalletd\API\AddEcOutput.cs" />
+    <Compile Include="FactomWalletd\API\AddFee.cs" />
+    <Compile Include="FactomWalletd\API\AddInput.cs" />
+    <Compile Include="FactomWalletd\API\AddOutput.cs" />
+    <Compile Include="FactomWalletd\API\Address.cs" />
+    <Compile Include="FactomWalletd\API\ComposeEntry.cs" />
+    <Compile Include="FactomWalletd\API\ComposeTransaction.cs" />
+    <Compile Include="FactomWalletd\API\DeleteTransaction.cs" />
+    <Compile Include="FactomWalletd\API\ImportKoinify.cs" />
+    <Compile Include="FactomWalletd\API\NewTransaction.cs" />
+    <Compile Include="FactomWalletd\API\Properties.cs" />
+    <Compile Include="FactomWalletd\API\SignTransaction.cs" />
+    <Compile Include="FactomWalletd\API\SubFee.cs" />
+    <Compile Include="FactomWalletd\API\TmpTransactions.cs" />
+    <Compile Include="FactomWalletd\API\TransactionsByRange.cs" />
+    <Compile Include="FactomWalletd\API\WalletBackup.cs" />
+    <Compile Include="Factomd\API\Transaction.cs" />
+    <Compile Include="FactomWalletd\API\TransactionsByTxID.cs" />
+    <Compile Include="FactomWalletd\API\TransactionsByAddress.cs" />
+    <Compile Include="Helper\Chain.cs" />
+    <Compile Include="Helper\ECAddress.cs" />
+    <Compile Include="Helper\EntryItem.cs" />
+    <Compile Include="Helper\FCTAddress.cs" />
+    <Compile Include="Factomd\Errors.cs" />
+    <Compile Include="Factomd\APIError.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Factomd\" />
+    <Folder Include="FactomWalletd\" />
+    <Folder Include="Factomd\" />
+    <Folder Include="Factomd\API\" />
+    <Folder Include="FactomWalletd\API\" />
+    <Folder Include="FactomUtils\" />
+    <Folder Include="Helper\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

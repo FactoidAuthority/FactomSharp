@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharp.Serializers.Newtonsoft.Json;
 
-namespace FactomSharp.FactomWalletd
+namespace FactomSharp.FactomWalletd.API
 {
     /// <summary>
     /// generate-factoid-address https://docs.factom.com/api#generate-factoid-address

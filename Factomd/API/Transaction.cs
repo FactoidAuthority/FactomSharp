@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Serializers.Newtonsoft.Json;
 
-namespace FactomSharp.Factomd
+namespace FactomSharp.Factomd.API
 {
     /// <summary>
     /// send-raw-message https://docs.factom.com/api#transaction

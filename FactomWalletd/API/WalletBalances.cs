@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Serializers.Newtonsoft.Json;
 
-namespace FactomSharp.FactomWalletd
+namespace FactomSharp.FactomWalletd.API
 {
     /// <summary>
     /// wallet-balances https://docs.factom.com/api#wallet-balances

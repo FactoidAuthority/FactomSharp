@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharp.Serializers.Newtonsoft.Json;
 
-namespace FactomSharp.FactomWalletd
+namespace FactomSharp.FactomWalletd.API
 {
     /// <summary>
     /// tmp-transactions https://docs.factom.com/api#tmp-transactions

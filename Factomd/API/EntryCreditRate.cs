@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Serializers.Newtonsoft.Json;
 
-namespace FactomSharp.Factomd
+namespace FactomSharp.Factomd.API
 {
     /// <summary>
     /// entry-credit-rate https://docs.factom.com/api#entry-credit-rate

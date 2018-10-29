@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharp.Serializers.Newtonsoft.Json;
 
-namespace FactomSharp.FactomWalletd
+namespace FactomSharp.FactomWalletd.API
 {
     /// <summary>
     /// properties https://docs.factom.com/api#properties

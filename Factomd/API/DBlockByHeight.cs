@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Serializers.Newtonsoft.Json;
 
-namespace FactomSharp.Factomd
+namespace FactomSharp.Factomd.API
 {
     /// <summary>
     /// dblock-by-height https://docs.factom.com/api#dblock-by-height

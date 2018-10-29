@@ -80,11 +80,12 @@ The chain class will monitor the entries.  The two status's of interest are:
     
 ##### Full API support.
     
-You will find all the API's in the namespace FactomSharp.Factomd.API and FactomSharp.FactomWalletd.API
+You will find all the API's in the namespace **FactomSharp.Factomd.API** and **FactomSharp.FactomWalletd.API**
 example:
 
     var rate = new FactomSharp.Factomd.API.EntryCreditRate(factomd);
     rate.Run();
+    WriteLine($"EC Rate {rate.Result.result.Rate}");
     
     
 ##### Multiple nodes:

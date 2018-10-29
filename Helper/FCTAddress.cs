@@ -1,5 +1,6 @@
 ﻿using System;
 using FactomSharp.Factomd;
+using FactomSharp.Factomd.API;
 
 namespace FactomSharp.Helper
 {

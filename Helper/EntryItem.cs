@@ -1,5 +1,6 @@
 ﻿using System;
 using FactomSharp.Factomd;
+using FactomSharp.Factomd.API;
 
 namespace FactomSharp.Helper
 {
@@ -31,8 +32,8 @@ namespace FactomSharp.Helper
         public Helper.Chain.BlockingMode    Blocking    {get; set;}
         public Helper.Chain                 Chain       {get; set;}
         
-        public CommitEntry                  Commit      {get; set;}
-        public RevealEntry                  Reveal      {get; set;}
+        public Factomd.API.CommitEntry      Commit      {get; set;}
+        public Factomd.API.RevealEntry      Reveal      {get; set;}
         public APIError                     ApiError    {get; set;}
         
         State _state = State.Queued;

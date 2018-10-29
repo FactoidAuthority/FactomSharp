@@ -56,7 +56,12 @@
         Console.WriteLine($"Writing: {text}");
         var entry = chain.AddEntry(Encoding.ASCII.GetBytes(text));
     }
+    
+    Console.ReadLine(); //Pause, let the chain thread run.
 
+The chain class will monitor the entries.  The two status's of interest are:
+    TransactionACK   - Found in network, but not written to the blockchain yet.
+    DBlockConfirmed  - Found in Blockchain.
 
 ##### To read through the chain data:
 
@@ -72,6 +77,15 @@
     }
 
 ---
+    
+##### Full API support.
+    
+You will find all the API's in the namespace FactomSharp.Factomd.API and FactomSharp.FactomWalletd.API
+example:
+
+    var rate = new FactomSharp.Factomd.API.EntryCreditRate(factomd);
+    rate.Run();
+    
     
 ##### Multiple nodes:
 Use a comma separated list of URLs:

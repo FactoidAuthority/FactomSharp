@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FactomSharp.Factomd;
+using FactomSharp.Factomd.API;
 using Newtonsoft.Json;
 
 namespace FactomSharp.Helper
@@ -42,10 +43,10 @@ namespace FactomSharp.Helper
         
         
         
-        public string               TxId        {get; set;}
-        public string               EntryHash   {get; set;}
-        public CommitChain          Commit      {get; set;}
-        public RevealChain          Reveal      {get; set;}
+        public string                       TxId        {get; set;}
+        public string                       EntryHash   {get; set;}
+        public Factomd.API.CommitChain      Commit      {get; set;}
+        public Factomd.API.RevealChain      Reveal      {get; set;}
         
         
         public int                  PollACKms   {get; set;} = 5000;
@@ -100,7 +101,7 @@ namespace FactomSharp.Helper
             {
                 try
                 {
-                    Commit = new FactomSharp.Factomd.CommitChain(FactomD);
+                    Commit = new CommitChain(FactomD);
                     var commitStatus = Commit.Run(data,EcAddress.Public,EcAddress.Secret,extIDs,chainIdString);
                    
                     if (commitStatus)
@@ -165,7 +166,7 @@ namespace FactomSharp.Helper
             Action<EntryItem> action = (process) => {
                 try
                 {
-                    process.Commit = new FactomSharp.Factomd.CommitEntry(FactomD);
+                    process.Commit = new CommitEntry(FactomD);
                     var commitStatus = process.Commit.Run(ChainID,dataEntry,EcAddress.Public,EcAddress.Secret,ExtIDs);
                    
                     if (commitStatus)

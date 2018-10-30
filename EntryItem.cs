@@ -2,7 +2,7 @@
 using FactomSharp.Factomd;
 using FactomSharp.Factomd.API;
 
-namespace FactomSharp.Helper
+namespace FactomSharp
 {
     public class EntryItem 
     {

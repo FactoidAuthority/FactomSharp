@@ -8,7 +8,7 @@ using FactomSharp.Factomd;
 using FactomSharp.Factomd.API;
 using Newtonsoft.Json;
 
-namespace FactomSharp.Helper
+namespace FactomSharp
 {
     public class Chain
     {

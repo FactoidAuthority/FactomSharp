@@ -36,8 +36,8 @@
     var myEcAddress = "EC3PV61FYYEQFKwwCVEZj9m5Ge9TrPhE9A2N7pA9YPNM7PXNfuCh";
     var myEsAddress = "Es4Mn6eW8AGtNhH1YSGepbBofFzfJnq3RLFtCZ93kZ14VwGaeQHq";
     
-    var address = new Helper.ECAddress(factomd,myEcAddress,myEsAddress);
-    var chain = new Helper.Chain(address);
+    var address = new ECAddress(factomd,myEcAddress,myEsAddress);
+    var chain = new Chain(address);
     
     chain.ChainStatusChange += (o,a) => {
       Console.WriteLine($"ChainStatusChange: {a.ToString()}");
@@ -69,8 +69,8 @@ The chain class will monitor the entries.  The two status's of interest are:
     var factomd = new FactomdRestClient("https://api.mynode.com:8088"); 
     var myEcAddress = "EC3PV61FYYEQFKwwCVEZj9m5Ge9TrPhE9A2N7pA9YPNM7PXNfuCh";
     
-    var address = new Helper.ECAddress(factomd,myEcAddress);
-    var chain = new Helper.Chain(address,"3a6c770d8b152dcc80fa0a54fa931c6208e96f14f76dd616e51502a58836e9f8");
+    var address = new ECAddress(factomd,myEcAddress);
+    var chain = new Chain(address,"3a6c770d8b152dcc80fa0a54fa931c6208e96f14f76dd616e51502a58836e9f8");
     
     foreach (var item in chain.GetEntries())
     {

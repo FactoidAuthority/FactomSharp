@@ -37,27 +37,28 @@
     var myEsAddress = "Es4Mn6eW8AGtNhH1YSGepbBofFzfJnq3RLFtCZ93kZ14VwGaeQHq";
     
     var address = new ECAddress(factomd,myEcAddress,myEsAddress);
-    var chain = new Chain(address);
-    
-    chain.ChainStatusChange += (o,a) => {
-      Console.WriteLine($"ChainStatusChange: {a.ToString()}");
-    };
-            
-    chain.QueueItemStatusChange += (o,a) => {
-      var item = (EntryItem)o;
-      Console.WriteLine($"EntryStatusChange {a.ToString()} {item?.ApiError?.error}");
-    };
- 
-    chain.Create(Encoding.ASCII.GetBytes("This is my new chain"));
-
-    for (int i =1; i< 10;i++)
+    using (var chain = new Chain(address))
     {
-        var text = $"This is a test - hello! {i}";
-        Console.WriteLine($"Writing: {text}");
-        var entry = chain.AddEntry(Encoding.ASCII.GetBytes(text));
-    }
+      chain.ChainStatusChange += (o,a) => {
+        Console.WriteLine($"ChainStatusChange: {a.ToString()}");
+      };
+            
+      chain.QueueItemStatusChange += (o,a) => {
+        var item = (EntryItem)o;
+        Console.WriteLine($"EntryStatusChange {a.ToString()} {item?.ApiError?.error}");
+      };
+ 
+      chain.Create(Encoding.ASCII.GetBytes("This is my new chain"));
+
+      for (int i =1; i< 10;i++)
+      {
+          var text = $"This is a test - hello! {i}";
+          Console.WriteLine($"Writing: {text}");
+          var entry = chain.AddEntry(Encoding.ASCII.GetBytes(text));
+      }
     
-    Console.ReadLine(); //Pause, let the chain thread run.
+      Console.ReadLine(); //Pause, let the chain thread run.
+    }  
 
 The chain class will monitor the entries.  The two status's of interest are:
 
@@ -70,11 +71,12 @@ The chain class will monitor the entries.  The two status's of interest are:
     var myEcAddress = "EC3PV61FYYEQFKwwCVEZj9m5Ge9TrPhE9A2N7pA9YPNM7PXNfuCh";
     
     var address = new ECAddress(factomd,myEcAddress);
-    var chain = new Chain(address,"3a6c770d8b152dcc80fa0a54fa931c6208e96f14f76dd616e51502a58836e9f8");
-    
-    foreach (var item in chain.GetEntries())
+    using (var chain = new Chain(address,"3a6c770d8b152dcc80fa0a54fa931c6208e96f14f76dd616e51502a58836e9f8"))
     {
-        WriteLine(Encoding.ASCII.GetString(item.Content));
+       foreach (var item in chain.GetEntries())
+       {
+           WriteLine(Encoding.ASCII.GetString(item.Content));
+       }
     }
 
 ---

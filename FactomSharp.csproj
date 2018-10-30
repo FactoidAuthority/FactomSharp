@@ -15,7 +15,7 @@
     <Title>FactomSharp</Title>
     <Description>.NET API for Factom.  Complete API, with helper classes.</Description>
     <PackageId>FactomSharp</PackageId>
-    <PackageVersion>0.3</PackageVersion>
+    <PackageVersion>0.4</PackageVersion>
     <Authors>TFA - The Factoid Authority</Authors>
     <NeutralLanguage>en-GB</NeutralLanguage>
     <PackageLicenseUrl>https://github.com/FactoidAuthority/FactomSharp/blob/master/LICENSE</PackageLicenseUrl>

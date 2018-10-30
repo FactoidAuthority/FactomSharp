@@ -10,7 +10,10 @@ using Newtonsoft.Json;
 
 namespace FactomSharp
 {
-    public class Chain
+    /// <summary>
+    /// Helper class, which manages chain operations.
+    /// </summary>
+    public class Chain : IDisposable
     {
         public enum State
         {
@@ -53,7 +56,7 @@ namespace FactomSharp
         public int                  PollDBACKms {get; set;} = 30000;
         
         public BlockingMode         Blocking {get; set;} = Chain.BlockingMode.Request;
-        
+        bool stopQueue = false;        
 
 		internal void SetQueueItemStatusChange(EntryItem queueItemEntry, EntryItem.State state)
 		{
@@ -85,6 +88,11 @@ namespace FactomSharp
             }
         }
     
+        /// <summary>
+        /// Open a new or existing chain.
+        /// </summary>
+        /// <param name="ecAddress">Ec address.</param>
+        /// <param name="existingChainID">Existing chain identifier.</param>
         public Chain(ECAddress ecAddress, String existingChainID = null)
         {
             EcAddress = ecAddress;
@@ -92,11 +100,39 @@ namespace FactomSharp
             ChainID = existingChainID;           
         }
         
+        /// <summary>
+        /// Open an existing chain (Read only, without EC Address)
+        /// </summary>
+        /// <param name="factomClient">Factom client.</param>
+        /// <param name="existingChainID">Existing chain identifier.</param>
+        public Chain(FactomdRestClient factomClient, String existingChainID)
+        {
+            FactomD = factomClient;
+            ChainID = existingChainID;           
+        }
+        
+        
         public int QueueCount { get { return EntryQueue.Count; } }
         public EntryItem[] QueueList { get { lock(queueLock){return EntryQueue.ToArray(); } } }
+        public void QueueStop()
+        {
+           stopQueue = true;
+        }
+        
+        
+        /// <summary>
+        /// Create a new chain, with the first entry.
+        /// </summary>
+        /// <returns>The create.</returns>
+        /// <param name="data">Data.</param>
+        /// <param name="extIDs">Ext identifier.</param>
+        /// <param name="chainIdString">Optional ChainID (a random ID will be created if not supplied).</param>
         
         public async Task<bool> Create(byte[] data, byte[][] extIDs = null, string chainIdString = null)
         {
+        
+            if (EcAddress == null) throw new Exception("No EcAddress provided - read only");
+        
             var task = Task.Run(() => 
             {
                 try
@@ -114,7 +150,7 @@ namespace FactomSharp
                             Status = State.RevealOK;
                             EntryHash = Reveal?.Result?.result?.Entryhash;
                             ChainID = Reveal?.Result?.result?.Chainid;
-                            
+
                             var sleep = PollACKms;
                             var timeout = DateTime.UtcNow.AddMinutes(10);
                             do
@@ -126,11 +162,11 @@ namespace FactomSharp
                                {
                                 case Ack.Status.DBlockConfirmed:
                                     Status = State.DBlockConfirmed;
-                                    return;
+                                    return;  //Complete, so quit
                                 case Ack.Status.TransactionACK:
                                     Status = State.TransactionACK;
                                     sleep = PollDBACKms;
-                                    if (Blocking != BlockingMode.DBlockConfirmed) return;
+                                    if (Blocking != BlockingMode.DBlockConfirmed) return; //Complete if we are not looking for DBlockConfirmed
                                     break;
                                 case Ack.Status.NotConfirmed:
                                 case Ack.Status.RequestFailed:
@@ -162,6 +198,7 @@ namespace FactomSharp
 
         public EntryItem AddEntry(byte[] dataEntry, byte [][] ExtIDs = null)
         {
+            if (EcAddress == null) throw new Exception("No EcAddress provided - read only");
 
             Action<EntryItem> action = (process) => {
                 try
@@ -169,7 +206,7 @@ namespace FactomSharp
                     process.Commit = new CommitEntry(FactomD);
                     var commitStatus = process.Commit.Run(ChainID,dataEntry,EcAddress.Public,EcAddress.Secret,ExtIDs);
                    
-                    if (commitStatus)
+                    if (commitStatus) //commit success?
                     {
                         process.Status = EntryItem.State.CommitOK;
                         process.TxId = process.Commit?.Result?.result?.Txid ?? null;
@@ -178,16 +215,15 @@ namespace FactomSharp
                         {
                             process.Status = EntryItem.State.RevealOK;
                             process.EntryHash = process.Reveal?.Result?.result?.Entryhash;
-                            process.Chain.ChainID = process.Reveal?.Result?.result?.Chainid;
                         }
-                        else
+                        else  //Reveal failed
                         {
                             var error = JsonConvert.DeserializeObject<APIError>(process.Reveal.JsonReply);
                             process.ApiError = error;
                             process.Status =  EntryItem.State.RevealFail;
                         }
                     }
-                    else
+                    else //Commit failed 
                     {
                         var error = JsonConvert.DeserializeObject<APIError>(process.Commit.JsonReply);
                         process.ApiError = error;
@@ -197,6 +233,7 @@ namespace FactomSharp
                 catch (Exception ex)
                 {
                     var error = new APIError(ex);
+                    process.ApiError = error;
                     process.Status = EntryItem.State.Exception;
                 }
             };
@@ -241,6 +278,7 @@ namespace FactomSharp
         
         void RunQueue()
         {
+            stopQueue = false;
             EntryItem[] tempQueueList;
             if (TaskQueue == null || TaskQueue.Status != TaskStatus.Running)
             {
@@ -255,13 +293,13 @@ namespace FactomSharp
                             tempQueueList = EntryQueue.ToArray();
                          }
                       
-                         foreach (var item in tempQueueList)
+                         foreach (var item in tempQueueList)  //iterate though queue
                          {
                             item.Run();
                             
-                            if (item.Status < EntryItem.State.Queued)
+                            if (item.Status < EntryItem.State.Queued) //Anything less than Queued, is an error state
                             {
-                               break;
+                               break;  //Quit queue
                             }
                             else if (item.Status < EntryItem.State.TransactionACK)
                             {
@@ -282,8 +320,7 @@ namespace FactomSharp
                      }
                      if (EntryQueue.Count == 0) break;
                      queueBlock.WaitOne(5000);
-                  } while(EntryQueue.Count>0);
-                  
+                  } while(EntryQueue.Count>0 && !stopQueue);
                });
             }
             else
@@ -291,6 +328,17 @@ namespace FactomSharp
                 queueBlock.Set();
             }
         }
+        
+        public void Dispose()
+        {
+            EntryQueue.Clear();
+            queueBlock.Set();
+            if (TaskQueue!=null)
+            {
+                if (TaskQueue.Status == TaskStatus.Running) TaskQueue.Wait(100);
+                TaskQueue.Dispose();
+            }
+        }        
     }
     
 }

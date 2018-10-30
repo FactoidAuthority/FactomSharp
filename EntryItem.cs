@@ -29,8 +29,8 @@ namespace FactomSharp
         public string                       TxId        {get; set;}
         public string                       EntryHash   {get; set;}
         
-        public Helper.Chain.BlockingMode    Blocking    {get; set;}
-        public Helper.Chain                 Chain       {get; set;}
+        public Chain.BlockingMode    Blocking    {get; set;}
+        public Chain                 Chain       {get; set;}
         
         public Factomd.API.CommitEntry      Commit      {get; set;}
         public Factomd.API.RevealEntry      Reveal      {get; set;}
@@ -55,7 +55,7 @@ namespace FactomSharp
             }
         }
     
-        public EntryItem(Helper.Chain chain, Action<EntryItem> action, Helper.Chain.BlockingMode blocking = Chain.BlockingMode.Request)
+        public EntryItem(Chain chain, Action<EntryItem> action, Chain.BlockingMode blocking = Chain.BlockingMode.Request)
         {
             Process = action;
             Blocking = blocking;

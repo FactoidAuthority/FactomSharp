@@ -61,7 +61,7 @@ namespace FactomSharp.Factomd.API
             //Decode Factom addresses address to bytes
             var ECPublicBytes = ECpublic.FactomBase58ToBytes();
             var ECSecretBytes = ECprivate.FactomBase58ToBytes();
-            var signature = Chaos.NaCl.Ed25519.Sign(byteList.ToArray(),FactomUtils.GetPrivateKey(ECSecretBytes,ECPublicBytes));
+            var signature = Chaos.NaCl.Ed25519.Sign(byteList.ToArray(),FactomUtils.GetCombinedKey(ECSecretBytes,ECPublicBytes));
             
             //Add in the EC Public key (strip off header and checksum)
             byteList.AddRange(ECPublicBytes);

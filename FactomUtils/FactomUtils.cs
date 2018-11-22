@@ -20,7 +20,7 @@ namespace FactomSharp {
     /// <param name="end">The index to cut to</param>
     /// <returns></returns>
     public static byte[] CopyOfRange(this byte[] src, int start, int end) {
-        var len = end - start;
+        var len = end - start + 1;
         var dest = new byte[len];
         Array.Copy(src, start, dest, 0, len);
         return dest;
@@ -54,7 +54,7 @@ namespace FactomSharp {
         // 6 Byte millisec unix time
         var unixMilliLong = (long) (DateTime.UtcNow - unixEpoch).TotalMilliseconds;
         var unixBytes = BitConverter.GetBytes(unixMilliLong).SetEndian();
-        unixBytes = unixBytes.CopyOfRange(2, unixBytes.Length);
+        unixBytes = unixBytes.CopyOfRange(2, unixBytes.Length-1);
         return unixBytes;
     }
 
@@ -237,12 +237,54 @@ namespace FactomSharp {
         
         
         
-        static public byte[] GetPrivateKey(byte[] KeySecret, byte[] KeyPublic)
+        static public byte[] GetCombinedKey(byte[] KeySecret, byte[] KeyPublic)
         {
             var PrivateKey = new byte[64];           
             Array.Copy(KeySecret,PrivateKey,32);
             Array.Copy(KeyPublic,0,PrivateKey,32,32);
             return PrivateKey;
-        }        
+        }
+        
+        static public ulong ToFactoshi(this decimal value)
+        {
+            return (ulong)(value / 0.00000001m);
+        }
+
+        static public decimal FromFactoshi(this ulong value)
+        {
+            return value * 0.00000001m;
+        }
+        
+        
+        public static byte[] EncodeVarInt_F(this ulong value)
+        {
+            int outmax = 10;
+            int o;
+            byte[] output = new byte[outmax];
+
+                for (o=outmax-1; o > 0 ;o--)
+                {
+                    byte lower7bits = (byte)(value & 0x7f);
+                    if (o<outmax-1) lower7bits |= 128;
+                    output[o] = lower7bits;
+                    value >>= 7;
+                    if (value==0) break;
+                }
+                return output.CopyOfRange(o,outmax-1);
+        }
+    
+    
+        public static ulong DecodeVarInt_FInt32(this byte[] input)
+        {
+            long value = 0;
+            foreach(var lower7bits in input)
+            {
+                value |= (lower7bits & 0x7f);
+                if ((lower7bits & 128) != 0) value <<= 7;
+            }
+            return (ulong)value;
+        }
+
+        
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Serializers.Newtonsoft.Json;
@@ -62,7 +64,6 @@ namespace FactomSharp.Factomd.API
             
             return false;
         }
-    
         
         public class TransactionRequest
         {

@@ -52,7 +52,7 @@ namespace FactomSharp.Factomd.API
         {
             get
             {
-                return Result?.result?.Balance / 0.0000000001m ?? -1;
+                return Result?.result?.Balance.FromFactoshi() ?? -1;
             }
         } 
         
@@ -68,7 +68,7 @@ namespace FactomSharp.Factomd.API
             [JsonProperty("jsonrpc")]
             public readonly string Jsonrpc = "2.0";
             [JsonProperty("method")]
-            public readonly string Method = "entry-credit-balance";
+            public readonly string Method = "factoid-balance";
             [JsonProperty("id")]
             public long Id { get; set; }
         
@@ -98,7 +98,7 @@ namespace FactomSharp.Factomd.API
             public class Result
             {
                 [JsonProperty("balance")]
-                public long Balance { get; set; }
+                public ulong Balance { get; set; }
             }
         }
     }

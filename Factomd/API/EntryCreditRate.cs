@@ -70,7 +70,7 @@ namespace FactomSharp.Factomd.API
             public class Result
             {
                 [JsonProperty("rate")]
-                public long Rate { get; set; }
+                public ulong Rate { get; set; }
             }
         }
     }

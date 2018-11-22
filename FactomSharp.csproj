@@ -143,6 +143,7 @@
     <Compile Include="ECAddress.cs" />
     <Compile Include="EntryItem.cs" />
     <Compile Include="FCTAddress.cs" />
+    <Compile Include="Factomd\Transaction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

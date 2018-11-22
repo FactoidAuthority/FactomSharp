@@ -7,9 +7,10 @@ namespace FactomSharp
     public class ECAddress
     {
     
-        public FactomdRestClient FactomD { get; private set;}
-        public string            Public  { get; private set; }
-        public string            Secret  { get; private set; }
+        public FactomdRestClient FactomD            { get; private set;}
+        public string            Public             { get; private set; }
+        public string            Secret             { get; private set; }
+        public decimal           TransactionValue   { get; set; }
     
         public ECAddress(FactomdRestClient factomd, string publicAddress, string secretAddress=null)
         {
@@ -31,7 +32,7 @@ namespace FactomSharp
             var ecrate = new EntryCreditRate(FactomD);
             ecrate.Run();
             
-            return ecrate?.Result?.result?.Rate / 0.0000000001m ?? -1;
+            return ecrate?.Result?.result?.Rate.FromFactoshi() ?? -1;
         }
     }
 }

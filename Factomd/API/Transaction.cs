@@ -131,7 +131,7 @@ namespace FactomSharp.Factomd.API
                     public Put[] Outputs { get; set; }
             
                     [JsonProperty("outecs")]
-                    public object[] Outecs { get; set; }
+                    public Put[] Outecs { get; set; }
             
                     [JsonProperty("rcds")]
                     public string[] Rcds { get; set; }

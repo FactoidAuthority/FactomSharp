@@ -25,6 +25,12 @@ namespace FactomSharp.Factomd.API
             Client = client;
         }
     
+    
+        public bool Run(byte[] transaction)
+        {
+            return Run(transaction.ToHexString());
+        }
+    
         public bool Run(string transaction)
         {
             Request = new FactoidSubmitRequest();

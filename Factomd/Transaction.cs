@@ -1,46 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Linq;
 
 namespace FactomSharp.Factomd
 {
     public class Transaction
     {
     
-        public List<FCTAddress> FCT_Input    = new List<FCTAddress>();
-        public List<FCTAddress> FCT_Output   = new List<FCTAddress>();
-        public List<ECAddress>  EC_Output    = new List<ECAddress>();
+        public Dictionary<FCTAddress,decimal> FCT_Input    = new Dictionary<FCTAddress,decimal>();
+        public Dictionary<FCTAddress,decimal> FCT_Output   = new Dictionary<FCTAddress,decimal>();
+        public Dictionary<ECAddress,decimal>  EC_Output    = new Dictionary<ECAddress,decimal>();
+        
         
         public byte[] TXID                     { get; private set;}
             
         public Transaction()
         {
         }
-        public Transaction(FCTAddress fctInput, FCTAddress fctOutput = null, ECAddress ecAddress = null)
+
+        public void AddFCTInput(FCTAddress fct, decimal subtract_value)
         {
-            FCT_Input.Add(fctInput);
-            if (fctOutput!=null) FCT_Output.Add(fctOutput);
-            if (ecAddress!=null) EC_Output.Add(ecAddress);
+            FCT_Input.Add(fct,subtract_value);
+        }
+
+        public void AddFCTOutput(FCTAddress fct, decimal send_value)
+        {
+            FCT_Output.Add(fct,send_value);
+        }
+
+        public void AddECOutput(ECAddress ec, ulong send_value)
+        {
+            EC_Output.Add(ec,send_value);
         }
         
-        public void AddFCTInput(FCTAddress fct)
+        public void AddRCDType1(byte[] publicKey, byte[] signature)
         {
-            FCT_Input.Add(fct);
-        }
+            var byteList = new List<byte>();
 
-        public void AddFCTOutput(FCTAddress fct)
-        {
-            FCT_Output.Add(fct);
         }
-
-        public void AddECOutput(ECAddress ec)
-        {
-            EC_Output.Add(ec);
-        }          
+        
         
         public byte[] GetTransaction()
         {
-                        
+            var byteList = new List<byte>();
+            var marshalBinary = GetMarshalBinary();
+            byteList.AddRange(marshalBinary);
+            
+            // Add RCD Type 1
+            foreach(var input in FCT_Input)
+            {
+                byteList.Add(1); //The RCD type. This specifies how the datastructure should be interpreted. Type 1 is the only currently valid type. Can safely be coded using 1 byte for the first 127 types.
+                byteList.AddRange(input.Key.Public.FactomBase58ToBytes());
+                
+                // variable Signature 0 This is the data needed to satisfy RCD 0. It is a signature for type 1, but might be other types of data for later RCD types. Its length is dependent on the RCD type.
+                byteList.AddRange(input.Key.Sign(marshalBinary));
+            }
+            
+          //  var hash2 = SHA256.Create().ComputeHash(byteList.ToArray());
+            return byteList.ToArray();
+            
+        }
+        
+        
+        public byte[] GetMarshalBinary()
+        {
             var byteList = new List<byte>();
 
             //1 byte version
@@ -63,8 +87,8 @@ namespace FactomSharp.Factomd
             // 32 bytes Factoid Address (Input X) This is an RCD hash which previously had value assigned to it.
             foreach (var fct in FCT_Input)
             {
-                byteList.AddRange(fct.TransactionValue.ToFactoshi().EncodeVarInt_F());
-                byteList.AddRange(fct.Public.FactomBase58ToBytes());
+                byteList.AddRange(fct.Value.ToFactoshi().EncodeVarInt_F());
+                byteList.AddRange(fct.Key.Public.FactomBase58ToBytes());
             }
             
             // Factoid Outputs
@@ -72,8 +96,8 @@ namespace FactomSharp.Factomd
             // 32 bytes (Output X) This is an RCD hash which will have its balance increased.
             foreach (var fct in FCT_Output)
             {
-                byteList.AddRange(fct.TransactionValue.ToFactoshi().EncodeVarInt_F());
-                byteList.AddRange(fct.Public.FactomBase58ToBytes());
+                byteList.AddRange(fct.Value.ToFactoshi().EncodeVarInt_F());
+                byteList.AddRange(fct.Key.Public.FactomBase58ToBytes());
             }
 
             
@@ -82,32 +106,31 @@ namespace FactomSharp.Factomd
             // 32 bytes EC Pubkey (Purchase X) This is Entry Credit public key that will have its balance increased.
             foreach (var ec in EC_Output)
             {
-                byteList.AddRange(ec.TransactionValue.ToFactoshi().EncodeVarInt_F());
-                byteList.AddRange(ec.Public.FactomBase58ToBytes());
+                byteList.AddRange(ec.Value.ToFactoshi().EncodeVarInt_F());
+                byteList.AddRange(ec.Key.Public.FactomBase58ToBytes());
             }
 
             var marshalBinary = byteList.ToArray();
             TXID = SHA256.Create().ComputeHash(marshalBinary);
-            
-            
-            // Redeem Condition Datastructure (RCD) Reveal / Signature Section
-            // variable RCD 0 First RCD. It hashes to input 0. The length is dependent on the RCD type, which is in the first byte. There are as many RCDs as there are inputs.
-            foreach (var fct in FCT_Input)
-            {
-                byteList.Add(1); //The RCD type. This specifies how the datastructure should be interpreted. Type 1 is the only currently valid type. Can safely be coded using 1 byte for the first 127 types.
-                byteList.AddRange(fct.Public.FactomBase58ToBytes());
-                
-                // variable Signature 0 This is the data needed to satisfy RCD 0. It is a signature for type 1, but might be other types of data for later RCD types. Its length is dependent on the RCD type.
-                byteList.AddRange(fct.Sign(marshalBinary));
-            }
-            
-            var hash2 = SHA256.Create().ComputeHash(byteList.ToArray());
-                     
-
-            return byteList.ToArray();
+           
+            return marshalBinary;
         }
 
 
+        public uint ComputeEcRequiredFees()
+        {
+            var size = GetTransaction().Length;
+            var fee = Math.Floor((size + 1023) / 1024m);
+            fee += 10 * (this.FCT_Output.Count + this.EC_Output.Count);
+            fee += this.FCT_Output.Count; //RCDS
+            return (uint)fee;
+        }
+
+        public bool SendTransaction(FactomdRestClient factomd)
+        {
+            var trans = new Factomd.API.FactoidSubmit(factomd);
+            return trans.Run(GetTransaction().ToHexString());
+        }
         
     }
 }

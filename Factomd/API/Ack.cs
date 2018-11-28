@@ -49,7 +49,7 @@ namespace FactomSharp.Factomd.API
     
         public Status CheckFactoidTransaction(string hash)
         {
-            return Check(hash,"r");
+            return Check(hash,"f");
         }
     
         public Status CheckCommit(string hash)
@@ -72,8 +72,9 @@ namespace FactomSharp.Factomd.API
             if (!execute) return Status.RequestFailed;
             
             Status status = Status.Unknown;
-            if (!Enum.TryParse(Result.result.Entrydata.Status, out status))
-                    Enum.TryParse(Result.result.Commitdata.Status, out status);
+            if (!Enum.TryParse(Result?.result?.Entrydata?.Status ?? "null", out status))
+                    if (!Enum.TryParse(Result?.result?.Commitdata?.Status ?? "null", out status))
+                        Enum.TryParse(Result?.result.Status ?? "unknown", out status);
             
             return status;
         }
@@ -151,6 +152,12 @@ namespace FactomSharp.Factomd.API
         
                 [JsonProperty("entrydata")]
                 public Data Entrydata { get; set; }
+                
+                [JsonProperty("txid")]
+                public string TxID { get; set; }
+                
+                [JsonProperty("status")]
+                public string Status { get; set; }
                 
                 public class Data
                 {

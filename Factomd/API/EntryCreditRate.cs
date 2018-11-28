@@ -23,14 +23,14 @@ namespace FactomSharp.Factomd.API
             Client = client;
         }
     
-        public bool Run()
+        public decimal? Run()
         {
             Request = new EntryCreditRateRequest();
             return Run(Request);
         }
 
-    
-        public bool Run(EntryCreditRateRequest requestData)
+        //returns FCT Cost of single Entry Credit
+        public decimal? Run(EntryCreditRateRequest requestData)
         {
             var reply = Client.MakeRequest<EntryCreditRateRequest>(requestData);
             JsonReply = reply.Content;            
@@ -38,10 +38,10 @@ namespace FactomSharp.Factomd.API
             if (reply.StatusCode == System.Net.HttpStatusCode.OK)
             {            
                 Result = JsonConvert.DeserializeObject<EntryCreditRateResult>(reply.Content);
-                return true;
+                return Result?.result?.Rate.FromFactoshi();
             }
             
-            return false;
+            return null;
         }
     
         public class EntryCreditRateRequest

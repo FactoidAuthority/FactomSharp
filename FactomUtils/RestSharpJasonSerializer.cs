@@ -83,7 +83,7 @@ namespace RestSharp.Serializers.Newtonsoft.Json
             _serializer = new global::Newtonsoft.Json.JsonSerializer
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore,
-                NullValueHandling = NullValueHandling.Include,
+                NullValueHandling = NullValueHandling.Ignore,
                 DefaultValueHandling = DefaultValueHandling.Include
             };
         }

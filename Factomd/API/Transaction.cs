@@ -43,6 +43,11 @@ namespace FactomSharp.Factomd.API
             Client = client;
         }
     
+        public bool Run(byte[] hash)
+        {
+            return Run(hash.ToHexString());
+        }
+    
         public bool Run(string hash)
         {
             Request = new TransactionRequest();

@@ -10,7 +10,7 @@ namespace FactomSharp
         public FactomdRestClient FactomD            { get; private set;}
         public string            Public             { get; private set; }
         public string            Secret             { get; private set; }
-        public decimal           TransactionValue   { get; set; }
+        public long              LastBalance        { get; set; }
     
         public ECAddress(FactomdRestClient factomd, string publicAddress, string secretAddress=null)
         {
@@ -24,15 +24,13 @@ namespace FactomSharp
             var balance = new EntryCreditBalance(FactomD);
             balance.Run(Public);
             
-            return balance.Balance;
+            return LastBalance = balance.Balance;
         }
         
-        public decimal GetEntryCreditRate()
+        public decimal? GetEntryCreditRate()
         {
             var ecrate = new EntryCreditRate(FactomD);
-            ecrate.Run();
-            
-            return ecrate?.Result?.result?.Rate.FromFactoshi() ?? -1;
+            return ecrate.Run();
         }
     }
 }

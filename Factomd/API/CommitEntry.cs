@@ -37,7 +37,14 @@ namespace FactomSharp.Factomd.API
             Client = client;
         }
     
+        [Obsolete()]
         public bool Run(string chainID, byte[] dataEntry, string ECpublic, string ECprivate, byte [][] ExtIDs = null)
+        {
+            var ecaddress = new ECAddress(Client,ECpublic, ECprivate);
+            return Run(chainID, dataEntry, ecaddress, ExtIDs);
+        }
+    
+        public bool Run(string chainID, byte[] dataEntry, ECAddress ecAddress, byte [][] ExtIDs = null)
         {
       
             if (chainID==null) new Exception("Chain ID not set");
@@ -53,18 +60,14 @@ namespace FactomSharp.Factomd.API
             byteList.AddRange(FactomUtils.MilliTime());
             //32 byte Entry Hash
             byteList.AddRange(Entry.Hash);
-
             
             // 1 byte number of Entry Credits to pay
             byteList.Add(Entry.EntryCost);
             
-            //Decode Factom addresses address to bytes
-            var ECPublicBytes = ECpublic.FactomBase58ToBytes();
-            var ECSecretBytes = ECprivate.FactomBase58ToBytes();
-            var signature = Chaos.NaCl.Ed25519.Sign(byteList.ToArray(),FactomUtils.GetCombinedKey(ECSecretBytes,ECPublicBytes));
-            
+            //Sign
+            var signature = ecAddress.SignFunction(byteList.ToArray());
             //Add in the EC Public key (strip off header and checksum)
-            byteList.AddRange(ECPublicBytes);
+            byteList.AddRange(ecAddress.Public.FactomBase58ToBytes());
             
             //Add signature
             byteList.AddRange(signature);

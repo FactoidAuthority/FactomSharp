@@ -12,6 +12,7 @@ namespace FactomSharp.Factomd
         public Dictionary<FCTAddress,decimal> FCT_Output   = new Dictionary<FCTAddress,decimal>();
         public Dictionary<ECAddress,decimal>  EC_Output    = new Dictionary<ECAddress,decimal>();
         
+        public decimal Fee { get; set;}
         
         public byte[] TXID                     { get; private set;}
             
@@ -40,6 +41,7 @@ namespace FactomSharp.Factomd
 
         }
         
+
         
         public byte[] GetTransaction()
         {
@@ -47,7 +49,7 @@ namespace FactomSharp.Factomd
             var marshalBinary = GetMarshalBinary();
             byteList.AddRange(marshalBinary);
             
-            // Add RCD Type 1
+            // Add RCDs Type 1
             foreach(var input in FCT_Input)
             {
                 byteList.Add(1); //The RCD type. This specifies how the datastructure should be interpreted. Type 1 is the only currently valid type. Can safely be coded using 1 byte for the first 127 types.
@@ -87,7 +89,15 @@ namespace FactomSharp.Factomd
             // 32 bytes Factoid Address (Input X) This is an RCD hash which previously had value assigned to it.
             foreach (var fct in FCT_Input)
             {
-                byteList.AddRange(fct.Value.ToFactoshi().EncodeVarInt_F());
+                if (fct.Key == FCT_Input.First().Key)
+                {
+                    byteList.AddRange((fct.Value + Fee).ToFactoshi().EncodeVarInt_F());
+                    
+                }
+                else
+                {
+                    byteList.AddRange(fct.Value.ToFactoshi().EncodeVarInt_F());
+                }
                 byteList.AddRange(fct.Key.Public.FactomBase58ToBytes());
             }
             
@@ -116,15 +126,46 @@ namespace FactomSharp.Factomd
             return marshalBinary;
         }
 
-
-        public uint ComputeEcRequiredFees()
+        public int ComputeTransactionSize()
         {
-            var size = GetTransaction().Length;
+            var len = 10; //Header
+            
+            foreach(var fct in FCT_Input)  //Input + RCD
+            {
+                len += fct.Value.ToFactoshi().EncodeVarInt_F().Length;
+                len += (32+1+32+64);  //32 byte public key - 1 byte RCD type, 32 public key, 64 Sign
+            }
+            
+            foreach (var fct in FCT_Output)
+            {
+                len += fct.Value.ToFactoshi().EncodeVarInt_F().Length;
+                len += 32;  //public key
+            }
+            
+            foreach (var ec in EC_Output)
+            {
+                len += ec.Value.ToFactoshi().EncodeVarInt_F().Length;
+                len += 32;
+            }
+            
+            return len;
+        }
+        
+        public uint ComputeRequiredFeesEc()
+        {
+            var size = ComputeTransactionSize();
             var fee = Math.Floor((size + 1023) / 1024m);
             fee += 10 * (this.FCT_Output.Count + this.EC_Output.Count);
-            fee += this.FCT_Output.Count; //RCDS
+            fee += this.FCT_Input.Count; //RCDS
             return (uint)fee;
         }
+        
+        public decimal ComputeRequiredFeesFCT(decimal rate)
+        {
+            var ecs = ComputeRequiredFeesEc();
+            return ecs * rate;
+        }
+        
 
         public bool SendTransaction(FactomdRestClient factomd)
         {

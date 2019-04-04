@@ -138,7 +138,7 @@ namespace FactomSharp
                 try
                 {
                     Commit = new CommitChain(FactomD);
-                    var commitStatus = Commit.Run(data,EcAddress.Public,EcAddress.Secret,extIDs,chainIdString);
+                    var commitStatus = Commit.Run(data,EcAddress,extIDs,chainIdString);
                    
                     if (commitStatus)
                     {
@@ -204,7 +204,7 @@ namespace FactomSharp
                 try
                 {
                     process.Commit = new CommitEntry(FactomD);
-                    var commitStatus = process.Commit.Run(ChainID,dataEntry,EcAddress.Public,EcAddress.Secret,ExtIDs);
+                    var commitStatus = process.Commit.Run(ChainID,dataEntry,EcAddress,ExtIDs);
                    
                     if (commitStatus) //commit success?
                     {

@@ -139,7 +139,8 @@ namespace FactomSharp
                 {
                     Commit = new CommitChain(FactomD);
                     var commitStatus = Commit.Run(data,EcAddress,extIDs,chainIdString);
-                   
+                    ChainID = Commit.Entry.ChainIdString;
+                    
                     if (commitStatus)
                     {
                         Status = State.CommitOK;
@@ -149,7 +150,6 @@ namespace FactomSharp
                         {
                             Status = State.RevealOK;
                             EntryHash = Reveal?.Result?.result?.Entryhash;
-                            ChainID = Reveal?.Result?.result?.Chainid;
 
                             var sleep = PollACKms;
                             var timeout = DateTime.UtcNow.AddMinutes(10);

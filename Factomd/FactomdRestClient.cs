@@ -76,7 +76,5 @@ namespace FactomSharp.Factomd
                 
                 return response;
         }
-        
-        
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FactomSharp.Factomd
 {
-    public class Transaction
+    public class ComposeTransaction
     {
     
         public Dictionary<FCTAddress,decimal> FCT_Input    = new Dictionary<FCTAddress,decimal>();
@@ -16,7 +16,7 @@ namespace FactomSharp.Factomd
         
         public byte[] TXID                     { get; private set;}
             
-        public Transaction()
+        public ComposeTransaction()
         {
         }
 

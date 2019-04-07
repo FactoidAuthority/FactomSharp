@@ -46,34 +46,10 @@ namespace FactomSharp.Factomd.API
     
         public bool Run(string chainID, byte[] dataEntry, ECAddress ecAddress, byte [][] ExtIDs = null)
         {
-      
-            if (chainID==null) new Exception("Chain ID not set");
+            var compose = new ComposeEntry(chainID, dataEntry, ecAddress, ExtIDs);
             
-            Entry = new EntryData(chainID,dataEntry,ExtIDs);
-            
-            var byteList = new List<byte>();
-
-            //1 byte version
-            byteList.Add(0);
-
-            // 6 byte milliTimestamp (truncated unix time)
-            byteList.AddRange(FactomUtils.MilliTime());
-            //32 byte Entry Hash
-            byteList.AddRange(Entry.Hash);
-            
-            // 1 byte number of Entry Credits to pay
-            byteList.Add(Entry.EntryCost);
-            
-            //Sign
-            var signature = ecAddress.SignFunction(byteList.ToArray());
-            //Add in the EC Public key (strip off header and checksum)
-            byteList.AddRange(ecAddress.Public.FactomBase58ToBytes());
-            
-            //Add signature
-            byteList.AddRange(signature);
-                        
             Request = new CommitEntryRequest();
-            Request.param.Message = byteList.ToArray().ToHexString();
+            Request.param.Message = compose.GetHexString();
 
             return Run(Request);
         }

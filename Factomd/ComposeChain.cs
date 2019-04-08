@@ -11,7 +11,7 @@ namespace FactomSharp.Factomd
         public ECAddress ECaddress         { get; set; }
         public byte[][]  ExtIDs            { get; set; } = null;
         public string    ChainIdString     { get; set; } = null;
-        
+        public EntryData Entry             { get; private set; } 
     
         public ComposeChain(byte[] firstEntry, ECAddress ecAddress, byte [][] extIDs = null, string chainIdString = null)
         {
@@ -42,7 +42,7 @@ namespace FactomSharp.Factomd
                 ChainId = SHA256.Create().ComputeHash(chainHash.ToArray());
             }
                         
-            var Entry = new EntryData(ChainId,FirstEntry,ExtIDs);
+            Entry = new EntryData(ChainId,FirstEntry,ExtIDs);
             
             var byteList = new List<byte>();
 

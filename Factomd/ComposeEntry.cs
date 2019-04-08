@@ -10,6 +10,7 @@ namespace FactomSharp.Factomd
         public byte[]       DataEntry         { get; set; }
         public ECAddress    EcAddress         { get; set; }
         public byte[][]     ExtIDs            { get; set; } = null;
+        public EntryData    Entry             { get; private set; } 
     
     
         public ComposeEntry(string chainID, byte[] dataEntry, ECAddress ecAddress, byte [][] extIDs = null)
@@ -25,7 +26,7 @@ namespace FactomSharp.Factomd
 
             if (ChainID == null) new Exception("Chain ID not set");
 
-            var Entry = new EntryData(ChainID, DataEntry, ExtIDs);
+            Entry = new EntryData(ChainID, DataEntry, ExtIDs);
 
             var byteList = new List<byte>();
 

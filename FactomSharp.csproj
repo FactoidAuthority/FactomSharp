@@ -20,7 +20,6 @@
     <NeutralLanguage>en-GB</NeutralLanguage>
     <PackageLicenseUrl>https://github.com/FactoidAuthority/FactomSharp/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/FactoidAuthority/FactomSharp</PackageProjectUrl>
-    <ReleaseVersion>0.3</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
